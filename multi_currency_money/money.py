@@ -11,7 +11,8 @@ class Money:
         self._amount = amount 
 
     def __eq__(self, obj):
-        return self._amount == obj._amount
+        return self._amount == obj._amount and \
+        self.__class__ == obj.__class__
 
 
 class Dollar(Money):
@@ -38,6 +39,7 @@ class TestTDD(unittest.TestCase):
         self.assertFalse(Dollar(5) == Dollar(6))
         self.assertTrue(Franc(5) == Franc(5))
         self.assertFalse(Franc(5) == Franc(6))
+        self.assertFalse(Franc(5) == Dollar(5))
 
     def testFrancMultiplication(self):
         five = Franc(5)
