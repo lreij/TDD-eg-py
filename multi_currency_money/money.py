@@ -62,7 +62,8 @@ class Sum:
         self.addend = addend
 
     def reduce(self, bank, to):
-        amount = self.augend._amount + self.addend._amount
+        amount = self.augend.reduce(bank, to)._amount + \
+        self.addend.reduce(bank, to)._amount
         return Money(amount, to)
 
 
@@ -132,6 +133,14 @@ class TestTDD(unittest.TestCase):
 
     def testIdentityRate(self):
         self.assertEquals(1, Bank().rate("USD", "USD"))
+
+    def testMixedAddition(self):
+        fiveBucks = Money.dollar(5)
+        tenFrancs = Money.franc(10)
+        bank = Bank()
+        bank.addRate("CHF", "USD", 2)
+        result = bank.reduce(fiveBucks.plus(tenFrancs), "USD")
+        self.assertEquals(Money.dollar(10), result)
 
 
 if __name__ == '__main__':
