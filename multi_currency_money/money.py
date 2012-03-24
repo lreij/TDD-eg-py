@@ -23,7 +23,10 @@ class Money:
         return self._currency
 
     def plus(self, addend):
-        return Money(self._amount + addend._amount, self._currency)
+        return Sum(self, addend)
+
+    def reduce(self, to):
+        return self
 
     @classmethod
     def dollar(self, amount):
@@ -37,8 +40,19 @@ class Money:
 class Bank:
 
     def reduce(self, source, to):
-        return Money.dollar(10)
-        
+        return source.reduce(to)
+
+
+class Sum:
+
+    def __init__(self, augend, addend):
+        self.augend = augend
+        self.addend = addend
+
+    def reduce(self, to):
+        amount = self.augend._amount + self.addend._amount
+        return Money(amount, to)
+
 
 class TestTDD(unittest.TestCase):
 
@@ -67,6 +81,23 @@ class TestTDD(unittest.TestCase):
         bank = Bank()
         reduced = bank.reduce(sum, "USD")
         self.assertEquals(Money.dollar(10), reduced)
+
+    def testPlusReturnsSum(self):
+        five = Money.dollar(5)
+        sum = five.plus(five)
+        self.assertEquals(five, sum.augend)
+        self.assertEquals(five, sum.addend)
+
+    def testReduceSum(self):
+        sum = Sum(Money.dollar(3), Money.dollar(4))
+        bank = Bank()
+        result = bank.reduce(sum, "USD")
+        self.assertEquals(Money.dollar(7), result)
+
+    def testReduceMoney(self):
+        bank = Bank()
+        result = bank.reduce(Money.dollar(1), "USD")
+        self.assertEquals(Money.dollar(1), result)
 
 
 if __name__ == '__main__':
