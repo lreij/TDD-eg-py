@@ -5,28 +5,25 @@ Multi-currency money."""
 import unittest
 
 
-class Dollar:
-
+class Money:
+    
     def __init__(self, amount):
-        self.__amount = amount 
-
-    def times(self, multiplier):
-        return Dollar(self.__amount * multiplier)
+        self._amount = amount 
 
     def __eq__(self, obj):
-        return self.__amount == obj.__amount
+        return self._amount == obj._amount
 
 
-class Franc:
-
-    def __init__(self, amount):
-        self.__amount = amount 
+class Dollar(Money):
 
     def times(self, multiplier):
-        return Franc(self.__amount * multiplier)
+        return Dollar(self._amount * multiplier)
 
-    def __eq__(self, obj):
-        return self.__amount == obj.__amount
+
+class Franc(Money):
+
+    def times(self, multiplier):
+        return Franc(self._amount * multiplier)
 
 
 class TestTDD(unittest.TestCase):
@@ -39,6 +36,8 @@ class TestTDD(unittest.TestCase):
     def testEquality(self):
         self.assertTrue(Dollar(5) == Dollar(5))
         self.assertFalse(Dollar(5) == Dollar(6))
+        self.assertTrue(Franc(5) == Franc(5))
+        self.assertFalse(Franc(5) == Franc(6))
 
     def testFrancMultiplication(self):
         five = Franc(5)
