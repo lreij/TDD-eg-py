@@ -11,15 +11,17 @@ class Dollar:
         self.amount = amount 
 
     def times(self, multiplier):
-        self.amount *= multiplier
+        return Dollar(self.amount * multiplier)
 
 
 class TestTDD(unittest.TestCase):
 
     def testMultiplication(self):
         five = Dollar(5)
-        five.times(2)
-        self.assertEquals(10, five.amount)
+        product = five.times(2)
+        self.assertEquals(10, product.amount)
+        product = five.times(3)
+        self.assertEquals(15, product.amount)
 
 
 if __name__ == '__main__':
