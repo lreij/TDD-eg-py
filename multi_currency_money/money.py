@@ -7,8 +7,9 @@ import unittest
 
 class Money:
     
-    def __init__(self, amount):
+    def __init__(self, amount, currency):
         self._amount = amount 
+        self._currency = currency
 
     def __eq__(self, obj):
         return self._amount == obj._amount and \
@@ -16,26 +17,29 @@ class Money:
 
     def times(self, multiplier):
         pass
-        
+
+    def currency(self):
+        return self._currency
+
     @classmethod
     def dollar(self, amount):
-        return Dollar(amount)
+        return Dollar(amount, "USD")
 
     @classmethod
     def franc(self, amount):
-        return Franc(amount)
+        return Franc(amount, "CHF")
 
 
 class Dollar(Money):
 
     def times(self, multiplier):
-        return Dollar(self._amount * multiplier)
+        return Money.dollar(self._amount * multiplier)
 
 
 class Franc(Money):
 
     def times(self, multiplier):
-        return Franc(self._amount * multiplier)
+        return Money.franc(self._amount * multiplier)
 
 
 class TestTDD(unittest.TestCase):
@@ -56,6 +60,10 @@ class TestTDD(unittest.TestCase):
         five = Money.franc(5)
         self.assertEquals(Money.franc(10), five.times(2))
         self.assertEquals(Money.franc(15), five.times(3))
+
+    def testCurrency(self):
+        self.assertEquals("USD", Money.dollar(1).currency())
+        self.assertEquals("CHF", Money.franc(1).currency())
 
 
 if __name__ == '__main__':
