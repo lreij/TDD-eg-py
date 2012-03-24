@@ -13,6 +13,9 @@ class Dollar:
     def times(self, multiplier):
         return Dollar(self.amount * multiplier)
 
+    def __eq__(self, obj):
+        return self.amount == obj.amount
+
 
 class TestTDD(unittest.TestCase):
 
@@ -22,6 +25,10 @@ class TestTDD(unittest.TestCase):
         self.assertEquals(10, product.amount)
         product = five.times(3)
         self.assertEquals(15, product.amount)
+
+    def testEquality(self):
+        self.assertTrue(Dollar(5) == Dollar(5))
+        self.assertFalse(Dollar(5) == Dollar(6))
 
 
 if __name__ == '__main__':
