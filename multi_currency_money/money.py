@@ -66,6 +66,13 @@ class Sum:
         self.addend.reduce(bank, to)._amount
         return Money(amount, to)
 
+    def plus(self, addend):
+        return Sum(self, addend)
+
+    def times(self, multiplier):
+        return Sum(self.augend.times(multiplier),
+            self.addend.times(multiplier))
+
 
 class Pair:
 
@@ -141,6 +148,24 @@ class TestTDD(unittest.TestCase):
         bank.addRate("CHF", "USD", 2)
         result = bank.reduce(fiveBucks.plus(tenFrancs), "USD")
         self.assertEquals(Money.dollar(10), result)
+
+    def testSumPlusMoney(self):
+        fiveBucks = Money.dollar(5)
+        tenFrancs = Money.franc(10)
+        bank = Bank()
+        bank.addRate("CHF", "USD", 2)
+        sum = Sum(fiveBucks, tenFrancs).plus(fiveBucks)
+        result = bank.reduce(sum, "USD")
+        self.assertEquals(Money.dollar(15), result)
+
+    def testSumTimes(self):
+        fiveBucks = Money.dollar(5)
+        tenFrancs = Money.franc(10)
+        bank = Bank()
+        bank.addRate("CHF", "USD", 2)
+        sum = Sum(fiveBucks, tenFrancs).times(2)
+        result = bank.reduce(sum, "USD")
+        self.assertEquals(Money.dollar(20), result)
 
 
 if __name__ == '__main__':
