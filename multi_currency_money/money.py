@@ -25,8 +25,9 @@ class Money:
     def plus(self, addend):
         return Sum(self, addend)
 
-    def reduce(self, to):
-        return self
+    def reduce(self, bank, to):
+        rate = bank.rate(self._currency, to)
+        return Money(self._amount / rate, to)
 
     @classmethod
     def dollar(self, amount):
@@ -39,8 +40,19 @@ class Money:
 
 class Bank:
 
+    def __init__(self):
+        self.rates = {}
+
     def reduce(self, source, to):
-        return source.reduce(to)
+        return source.reduce(self, to)
+
+    def addRate(self, f, t, rate):
+        self.rates[Pair(f, t)] = rate
+
+    def rate(self, f, t):
+        if f == t:
+            return 1
+        return self.rates[Pair(f, t)]
 
 
 class Sum:
@@ -49,9 +61,22 @@ class Sum:
         self.augend = augend
         self.addend = addend
 
-    def reduce(self, to):
+    def reduce(self, bank, to):
         amount = self.augend._amount + self.addend._amount
         return Money(amount, to)
+
+
+class Pair:
+
+    def __init__(self, f, t):
+        self._f = f
+        self._t = t
+
+    def __eq__(self, obj):
+        return self._f == obj._f and self._t == obj._t
+
+    def __hash__(self):
+        return 0
 
 
 class TestTDD(unittest.TestCase):
@@ -98,6 +123,15 @@ class TestTDD(unittest.TestCase):
         bank = Bank()
         result = bank.reduce(Money.dollar(1), "USD")
         self.assertEquals(Money.dollar(1), result)
+
+    def testReduceMoneyDifferentCurrent(self):
+        bank = Bank()
+        bank.addRate("CHF", "USD", 2)
+        result = bank.reduce(Money.franc(2), "USD")
+        self.assertEquals(Money.dollar(1), result)
+
+    def testIdentityRate(self):
+        self.assertEquals(1, Bank().rate("USD", "USD"))
 
 
 if __name__ == '__main__':
