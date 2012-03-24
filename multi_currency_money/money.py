@@ -16,7 +16,7 @@ class Money:
         self.currency() == obj.currency()
 
     def times(self, multiplier):
-        return Franc(self._amount * multiplier, 
+        return Money(self._amount * multiplier, 
             self._currency)
 
     def currency(self):
@@ -24,19 +24,11 @@ class Money:
 
     @classmethod
     def dollar(self, amount):
-        return Dollar(amount, "USD")
+        return Money(amount, "USD")
 
     @classmethod
     def franc(self, amount):
-        return Franc(amount, "CHF")
-
-
-class Dollar(Money):
-    pass
-
-
-class Franc(Money):
-    pass
+        return Money(amount, "CHF")
 
 
 class TestTDD(unittest.TestCase):
@@ -49,8 +41,6 @@ class TestTDD(unittest.TestCase):
     def testEquality(self):
         self.assertTrue(Money.dollar(5) == Money.dollar(5))
         self.assertFalse(Money.dollar(5) == Money.dollar(6))
-        self.assertTrue(Money.franc(5) == Money.franc(5))
-        self.assertFalse(Money.franc(5) == Money.franc(6))
         self.assertFalse(Money.franc(5) == Money.dollar(5))
 
     def testFrancMultiplication(self):
@@ -61,9 +51,6 @@ class TestTDD(unittest.TestCase):
     def testCurrency(self):
         self.assertEquals("USD", Money.dollar(1).currency())
         self.assertEquals("CHF", Money.franc(1).currency())
-
-    def testDifferenctClassEquality(self):
-        self.assertTrue(Money(10, "CHF") == Franc(10, "CHF"))
 
 
 if __name__ == '__main__':
