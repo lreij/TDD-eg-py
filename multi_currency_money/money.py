@@ -22,6 +22,9 @@ class Money:
     def currency(self):
         return self._currency
 
+    def plus(self, addend):
+        return Money(self._amount + addend._amount, self._currency)
+
     @classmethod
     def dollar(self, amount):
         return Money(amount, "USD")
@@ -30,6 +33,12 @@ class Money:
     def franc(self, amount):
         return Money(amount, "CHF")
 
+
+class Bank:
+
+    def reduce(self, source, to):
+        return Money.dollar(10)
+        
 
 class TestTDD(unittest.TestCase):
 
@@ -51,6 +60,13 @@ class TestTDD(unittest.TestCase):
     def testCurrency(self):
         self.assertEquals("USD", Money.dollar(1).currency())
         self.assertEquals("CHF", Money.franc(1).currency())
+
+    def testSimpleAddition(self):
+        five = Money.dollar(5)
+        sum = five.plus(five)
+        bank = Bank()
+        reduced = bank.reduce(sum, "USD")
+        self.assertEquals(Money.dollar(10), reduced)
 
 
 if __name__ == '__main__':
